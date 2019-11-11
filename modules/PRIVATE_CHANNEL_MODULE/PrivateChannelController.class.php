@@ -3,7 +3,7 @@
 namespace Budabot\User\Modules;
 
 /**
- * Authors: 
+ * Authors:
  *  - Tyrence (RK2)
  *  - Mindrila (RK1)
  *
@@ -11,65 +11,65 @@ namespace Budabot\User\Modules;
  *
  * Commands this controller contains:
  *	@DefineCommand(
- *		command     = 'members', 
- *		accessLevel = 'all', 
- *		description = "Member list", 
+ *		command     = 'members',
+ *		accessLevel = 'all',
+ *		description = "Member list",
  *		help        = 'private_channel.txt'
  *	)
  *	@DefineCommand(
- *		command     = 'adduser', 
- *		accessLevel = 'guild', 
- *		description = "Adds a player to the members list", 
+ *		command     = 'adduser',
+ *		accessLevel = 'guild',
+ *		description = "Adds a player to the members list",
  *		help        = 'private_channel.txt'
  *	)
  *	@DefineCommand(
- *		command     = 'remuser', 
- *		accessLevel = 'guild', 
- *		description = "Removes a player from the members list", 
+ *		command     = 'remuser',
+ *		accessLevel = 'guild',
+ *		description = "Removes a player from the members list",
  *		help        = 'private_channel.txt'
  *	)
  *	@DefineCommand(
- *		command     = 'invite', 
- *		accessLevel = 'guild', 
- *		description = "Invite players to the private channel", 
+ *		command     = 'invite',
+ *		accessLevel = 'guild',
+ *		description = "Invite players to the private channel",
  *		help        = 'private_channel.txt',
  *		alias       = 'inviteuser'
  *	)
  *	@DefineCommand(
- *		command     = 'kick', 
- *		accessLevel = 'guild', 
- *		description = "Kick players from the private channel", 
+ *		command     = 'kick',
+ *		accessLevel = 'guild',
+ *		description = "Kick players from the private channel",
  *		help        = 'private_channel.txt',
  *		alias       = 'kickuser'
  *	)
  *	@DefineCommand(
- *		command     = 'autoinvite', 
- *		accessLevel = 'member', 
- *		description = "Enable or disable autoinvite", 
+ *		command     = 'autoinvite',
+ *		accessLevel = 'member',
+ *		description = "Enable or disable autoinvite",
  *		help        = 'autoinvite.txt'
  *	)
  *	@DefineCommand(
- *		command     = 'count', 
- *		accessLevel = 'all', 
- *		description = "Shows how many characters are in the private channel", 
+ *		command     = 'count',
+ *		accessLevel = 'all',
+ *		description = "Shows how many characters are in the private channel",
  *		help        = 'count.txt'
  *	)
  *	@DefineCommand(
- *		command     = 'kickall', 
- *		accessLevel = 'guild', 
- *		description = "Kicks all from the private channel", 
+ *		command     = 'kickall',
+ *		accessLevel = 'guild',
+ *		description = "Kicks all from the private channel",
  *		help        = 'kickall.txt'
  *	)
  *	@DefineCommand(
- *		command     = 'join', 
- *		accessLevel = 'member', 
- *		description = "Join command for characters who want to join the private channel", 
+ *		command     = 'join',
+ *		accessLevel = 'member',
+ *		description = "Join command for characters who want to join the private channel",
  *		help        = 'private_channel.txt'
  *	)
  *	@DefineCommand(
- *		command     = 'leave', 
- *		accessLevel = 'all', 
- *		description = "Leave command for characters in private channel", 
+ *		command     = 'leave',
+ *		accessLevel = 'all',
+ *		description = "Leave command for characters in private channel",
  *		help        = 'private_channel.txt'
  *	)
  */
@@ -144,9 +144,9 @@ class PrivateChannelController {
 				$online = $this->buddylistManager->isOnline($row->name);
 				if (isset($this->chatBot->chatlist[$row->name])) {
 					$status = "(<green>Online and in channel<end>)";
-				} else if ($online === 1) {
+				} elseif ($online === 1) {
 					$status = "(<green>Online<end>)";
-				} else if ($online === 0) {
+				} elseif ($online === 0) {
 					$status = "(<red>Offline<end>)";
 				} else {
 					$status = "(<orange>Unknown<end>)";
@@ -188,16 +188,16 @@ class PrivateChannelController {
 	 */
 	public function inviteCommand($message, $channel, $sender, $sendto, $args) {
 		$name = ucfirst(strtolower($args[1]));
-		$uid = $this->chatBot->get_uid($name);
+		$uid = $this->chatBot->getUID($name);
 		if ($this->chatBot->vars["name"] == $name) {
 			$msg = "You cannot invite the bot to its own private channel.";
-		} else if ($uid) {
+		} elseif ($uid) {
 			if (isset($this->chatBot->chatlist[$name])) {
 				$msg = "<highlight>$name<end> is already in the private channel.";
 			} else {
 				$msg = "Invited <highlight>$name<end> to this channel.";
-				//$this->chatBot->privategroup_kick($name);
-				$this->chatBot->privategroup_invite($name);
+				//$this->chatBot->privategroupKick($name);
+				$this->chatBot->privategroupInvite($name);
 				$msg2 = "You have been invited to the <highlight><myname><end> channel by <highlight>$sender<end>.";
 				$this->chatBot->sendTell($msg2, $name);
 			}
@@ -214,15 +214,15 @@ class PrivateChannelController {
 	 */
 	public function kickCommand($message, $channel, $sender, $sendto, $args) {
 		$name = ucfirst(strtolower($args[1]));
-		$uid = $this->chatBot->get_uid($name);
+		$uid = $this->chatBot->getUID($name);
 		if (!$uid) {
 			$msg = "Character <highlight>{$name}<end> does not exist.";
-		} else if (!isset($this->chatBot->chatlist[$name])) {
+		} elseif (!isset($this->chatBot->chatlist[$name])) {
 			$msg = "Character <highlight>{$name}<end> is not in the private channel.";
 		} else {
 			if ($this->accessManager->compareCharacterAccessLevels($sender, $name) > 0) {
 				$msg = "<highlight>$name<end> has been kicked from the private channel.";
-				$this->chatBot->privategroup_kick($name);
+				$this->chatBot->privategroupKick($name);
 			} else {
 				$msg = "You do not have the required access level to kick <highlight>$name<end>.";
 			}
@@ -273,21 +273,28 @@ class PrivateChannelController {
 		forEach ($data as $row) {
 			if ($row->level > 1 && $row->level <= 14) {
 				$tl1++;
-			} else if ($row->level >= 15 && $row->level <= 49) {
+			} elseif ($row->level >= 15 && $row->level <= 49) {
 				$tl2++;
-			} else if ($row->level >= 50 && $row->level <= 99) {
+			} elseif ($row->level >= 50 && $row->level <= 99) {
 				$tl3++;
-			} else if ($row->level >= 100 && $row->level <= 149) {
+			} elseif ($row->level >= 100 && $row->level <= 149) {
 				$tl4++;
-			} else if ($row->level >= 150 && $row->level <= 189) {
+			} elseif ($row->level >= 150 && $row->level <= 189) {
 				$tl5++;
-			} else if ($row->level >= 190 && $row->level <= 204) {
+			} elseif ($row->level >= 190 && $row->level <= 204) {
 				$tl6++;
-			} else if ($row->level >= 205 && $row->level <= 220) {
+			} elseif ($row->level >= 205 && $row->level <= 220) {
 				$tl7++;
 			}
 		}
-		$msg = "<highlight>$numonline<end> in total: TL1 <highlight>$tl1<end>, TL2 <highlight>$tl2<end>, TL3 <highlight>$tl3<end>, TL4 <highlight>$tl4<end>, TL5 <highlight>$tl5<end>, TL6 <highlight>$tl6<end>, TL7 <highlight>$tl7<end>";
+		$msg = "<highlight>$numonline<end> in total: ".
+			"TL1 <highlight>$tl1<end>, ".
+			"TL2 <highlight>$tl2<end>, ".
+			"TL3 <highlight>$tl3<end>, ".
+			"TL4 <highlight>$tl4<end>, ".
+			"TL5 <highlight>$tl5<end>, ".
+			"TL6 <highlight>$tl6<end>, ".
+			"TL7 <highlight>$tl7<end>";
 		$sendto->reply($msg);
 	}
 	
@@ -311,7 +318,13 @@ class PrivateChannelController {
 		$online["Trader"] = 0;
 		$online["Shade"] = 0;
 
-		$data = $this->db->query("SELECT count(*) AS count, profession FROM online o LEFT JOIN players p ON (o.name = p.name AND p.dimension = '<dim>') WHERE added_by = '<myname>' AND channel_type = 'priv' GROUP BY `profession`");
+		$data = $this->db->query(
+			"SELECT count(*) AS count, profession ".
+			"FROM online o ".
+			"LEFT JOIN players p ON (o.name = p.name AND p.dimension = '<dim>') ".
+			"WHERE added_by = '<myname>' AND channel_type = 'priv' ".
+			"GROUP BY `profession`"
+		);
 		$numonline = count($data);
 		$msg = "<highlight>$numonline<end> in total: ";
 
@@ -349,7 +362,12 @@ class PrivateChannelController {
 		if ($numonline == 0) {
 			$msg = "No characters in channel.";
 		} else {
-			$sql = "SELECT `guild`, count(*) AS cnt, AVG(level) AS avg_level FROM online o LEFT JOIN players p ON (o.name = p.name AND p.dimension = '<dim>') WHERE added_by = '<myname>' AND channel_type = 'priv' GROUP BY `guild` ORDER BY `cnt` DESC, `avg_level` DESC";
+			$sql = "SELECT `guild`, count(*) AS cnt, AVG(level) AS avg_level ".
+				"FROM online o ".
+				"LEFT JOIN players p ON (o.name = p.name AND p.dimension = '<dim>') ".
+				"WHERE added_by = '<myname>' AND channel_type = 'priv' ".
+				"GROUP BY `guild` ".
+				"ORDER BY `cnt` DESC, `avg_level` DESC";
 			$data = $this->db->query($sql);
 			$numorgs = count($data);
 
@@ -378,7 +396,13 @@ class PrivateChannelController {
 		if ($prof == '') {
 			$msg = "Please choose one of these professions: adv, agent, crat, doc, enf, eng, fix, keep, ma, mp, nt, sol, shade, trader or all";
 		} else {
-			$data = $this->db->query("SELECT * FROM online o LEFT JOIN players p ON (o.name = p.name AND p.dimension = '<dim>') WHERE added_by = '<myname>' AND channel_type = 'priv' AND `profession` = ? ORDER BY `level`", $prof);
+			$data = $this->db->query(
+				"SELECT * FROM online o ".
+				"LEFT JOIN players p ON (o.name = p.name AND p.dimension = '<dim>') ".
+				"WHERE added_by = '<myname>' AND channel_type = 'priv' AND `profession` = ? ".
+				"ORDER BY `level`",
+				$prof
+			);
 			$numonline = count($data);
 			$msg = "<highlight>$numonline<end> $prof:";
 
@@ -401,7 +425,7 @@ class PrivateChannelController {
 	public function kickallCommand($message, $channel, $sender, $sendto, $args) {
 		$msg = "Everyone will be kicked from this channel in 10 seconds. [by <highlight>$sender<end>]";
 		$this->chatBot->sendPrivate($msg);
-		$this->timer->callLater(10, array($this->chatBot, 'privategroup_kick_all'));
+		$this->timer->callLater(10, array($this->chatBot, 'privategroupKickAll'));
 	}
 	
 	/**
@@ -419,7 +443,7 @@ class PrivateChannelController {
 					$msg = "You have been added as a member of this bot.  Use <highlight><symbol>autoinvite<end> to control your auto invite preference.";
 				}
 			}
-			$this->chatBot->privategroup_invite($sender);
+			$this->chatBot->privategroupInvite($sender);
 		}
 		
 		if (isset($msg)) {
@@ -432,7 +456,7 @@ class PrivateChannelController {
 	 * @Matches("/^leave$/i")
 	 */
 	public function leaveCommand($message, $channel, $sender, $sendto, $args) {
-		$this->chatBot->privategroup_kick($sender);
+		$this->chatBot->privategroupKick($sender);
 	}
 	
 	/**
@@ -518,7 +542,7 @@ class PrivateChannelController {
 		$data = $this->db->query("SELECT * FROM members_<myname> WHERE name = ? AND autoinv = ?", $sender, '1');
 		if (count($data) != 0) {
 			$msg = "You have been auto invited to the <highlight><myname><end> channel.  Use <highlight><symbol>autoinvite<end> to control your auto invite preference.";
-			$this->chatBot->privategroup_invite($sender);
+			$this->chatBot->privategroupInvite($sender);
 			$this->chatBot->sendTell($msg, $sender);
 		}
 	}
@@ -595,12 +619,12 @@ class PrivateChannelController {
 		$this->chatBot->sendTell($msg, $sender);
 	}
 	
-	public function addUser($name, $autoInvite = 1) {
+	public function addUser($name, $autoInvite=1) {
 		$name = ucfirst(strtolower($name));
-		$uid = $this->chatBot->get_uid($name);
+		$uid = $this->chatBot->getUID($name);
 		if ($this->chatBot->vars["name"] == $name) {
 			$msg = "You cannot add the bot as a member of itself.";
-		} else if (!$uid) {
+		} elseif (!$uid) {
 			$msg = "Character <highlight>$name<end> does not exist.";
 		} else {
 			$data = $this->db->query("SELECT * FROM members_<myname> WHERE `name` = ?", $name);
@@ -632,4 +656,3 @@ class PrivateChannelController {
 		return $msg;
 	}
 }
-

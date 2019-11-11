@@ -80,11 +80,66 @@ class Budabot extends AOChat {
 		$this->logger->log('DEBUG', 'Initializing bot');
 
 		// Create core tables if they don't already exist
-		$this->db->exec("CREATE TABLE IF NOT EXISTS cmdcfg_<myname> (`module` VARCHAR(50), `cmdevent` VARCHAR(6), `type` VARCHAR(18), `file` TEXT, `cmd` VARCHAR(50), `admin` VARCHAR(10), `description` VARCHAR(75) DEFAULT 'none', `verify` INT DEFAULT '0', `status` INT DEFAULT '0', `dependson` VARCHAR(25) DEFAULT 'none', `help` VARCHAR(255))");
-		$this->db->exec("CREATE TABLE IF NOT EXISTS eventcfg_<myname> (`module` VARCHAR(50), `type` VARCHAR(18), `file` VARCHAR(255), `description` VARCHAR(75) DEFAULT 'none', `verify` INT DEFAULT '0', `status` INT DEFAULT '0', `help` VARCHAR(255))");
-		$this->db->exec("CREATE TABLE IF NOT EXISTS settings_<myname> (`name` VARCHAR(50) NOT NULL, `module` VARCHAR(50), `type` VARCHAR(30), `mode` VARCHAR(10), `value` VARCHAR(255) DEFAULT '0', `options` VARCHAR(255) DEFAULT '0', `intoptions` VARCHAR(50) DEFAULT '0', `description` VARCHAR(75), `source` VARCHAR(5), `admin` VARCHAR(25), `verify` INT DEFAULT '0', `help` VARCHAR(255))");
-		$this->db->exec("CREATE TABLE IF NOT EXISTS hlpcfg_<myname> (`name` VARCHAR(25) NOT NULL, `module` VARCHAR(50), `file` VARCHAR(255), `description` VARCHAR(75), `admin` VARCHAR(10), `verify` INT DEFAULT '0')");
-		$this->db->exec("CREATE TABLE IF NOT EXISTS cmd_alias_<myname> (`cmd` VARCHAR(255) NOT NULL, `module` VARCHAR(50), `alias` VARCHAR(25) NOT NULL, `status` INT DEFAULT '0')");
+		$this->db->exec(
+			"CREATE TABLE IF NOT EXISTS cmdcfg_<myname> (".
+			"`module` VARCHAR(50), ".
+			"`cmdevent` VARCHAR(6), ".
+			"`type` VARCHAR(18), ".
+			"`file` TEXT, ".
+			"`cmd` VARCHAR(50), ".
+			"`admin` VARCHAR(10), ".
+			"`description` VARCHAR(75) DEFAULT 'none', ".
+			"`verify` INT DEFAULT '0', ".
+			"`status` INT DEFAULT '0', ".
+			"`dependson` VARCHAR(25) DEFAULT 'none', ".
+			"`help` VARCHAR(255)".
+			")"
+		);
+		$this->db->exec(
+			"CREATE TABLE IF NOT EXISTS eventcfg_<myname> (".
+			"`module` VARCHAR(50), ".
+			"`type` VARCHAR(18), ".
+			"`file` VARCHAR(255), ".
+			"`description` VARCHAR(75) DEFAULT 'none', ".
+			"`verify` INT DEFAULT '0', ".
+			"`status` INT DEFAULT '0', ".
+			"`help` VARCHAR(255)".
+			")"
+		);
+		$this->db->exec(
+			"CREATE TABLE IF NOT EXISTS settings_<myname> (".
+			"`name` VARCHAR(50) NOT NULL, ".
+			"`module` VARCHAR(50), ".
+			"`type` VARCHAR(30), ".
+			"`mode` VARCHAR(10), ".
+			"`value` VARCHAR(255) DEFAULT '0', ".
+			"`options` VARCHAR(255) DEFAULT '0', ".
+			"`intoptions` VARCHAR(50) DEFAULT '0', ".
+			"`description` VARCHAR(75), ".
+			"`source` VARCHAR(5), ".
+			"`admin` VARCHAR(25), ".
+			"`verify` INT DEFAULT '0', ".
+			"`help` VARCHAR(255)".
+			")"
+		);
+		$this->db->exec(
+			"CREATE TABLE IF NOT EXISTS hlpcfg_<myname> (".
+			"`name` VARCHAR(25) NOT NULL, ".
+			"`module` VARCHAR(50), ".
+			"`file` VARCHAR(255), ".
+			"`description` VARCHAR(75), ".
+			"`admin` VARCHAR(10), ".
+			"`verify` INT DEFAULT '0'".
+			")"
+		);
+		$this->db->exec(
+			"CREATE TABLE IF NOT EXISTS cmd_alias_<myname> (".
+			"`cmd` VARCHAR(255) NOT NULL, ".
+			"`module` VARCHAR(50), ".
+			"`alias` VARCHAR(25) NOT NULL, ".
+			"`status` INT DEFAULT '0'".
+			")"
+		);
 
 		// Prepare command/event settings table
 		$this->db->exec("UPDATE cmdcfg_<myname> SET `verify` = 0");
@@ -146,7 +201,7 @@ class Budabot extends AOChat {
 	 * @name: connect
 	 * @description: connect to AO chat servers
 	 */
-	function connectAO($login, $password, $server, $port) {
+	public function connectAO($login, $password, $server, $port) {
 		// Begin the login process
 		$this->logger->log('INFO', "Connecting to AO Server...({$server}:{$port})");
 		if (false === $this->connect($server, $port)) {
@@ -199,7 +254,6 @@ class Budabot extends AOChat {
 
 	public function processAllPackets() {
 		while ($this->processNextPacket()) {
-
 		}
 	}
 	
@@ -207,9 +261,9 @@ class Budabot extends AOChat {
 		// when bot isn't ready we wait for packets
 		// to make sure the server has finished sending them
 		// before marking the bot as ready
-		$packet = $this->wait_for_packet($this->isReady() ? 0 : 1);
+		$packet = $this->waitForPacket($this->isReady() ? 0 : 1);
 		if ($packet) {
-			$this->process_packet($packet);
+			$this->processPacket($packet);
 			return true;
 		} else {
 			$this->ready = true;
@@ -217,7 +271,7 @@ class Budabot extends AOChat {
 		}
 	}
 
-	public function sendPrivate($message, $disable_relay = false, $group = null) {
+	public function sendPrivate($message, $disable_relay=false, $group=null) {
 		// for when $text->makeBlob generates several pages
 		if (is_array($message)) {
 			forEach ($message as $page) {
@@ -236,11 +290,11 @@ class Budabot extends AOChat {
 		$guestColorChannel = $this->settingManager->get('guest_color_channel');
 		$privColor = $this->settingManager->get('default_priv_color');
 
-		$this->send_privgroup($group, $privColor.$message);
+		$this->sendPrivgroup($group, $privColor.$message);
 		if ($this->isDefaultPrivateChannel($group)) {
 			// relay to guild channel
 			if (!$disable_relay && $this->settingManager->get('guild_channel_status') == 1 && $this->settingManager->get("guest_relay") == 1 && $this->settingManager->get("guest_relay_commands") == 1) {
-				$this->send_guild("</font>{$guestColorChannel}[Guest]</font> {$senderLink}: {$privColor}$message</font>", "\0");
+				$this->sendGuild("</font>{$guestColorChannel}[Guest]</font> {$senderLink}: {$privColor}$message</font>", "\0");
 			}
 
 			// relay to bot relay
@@ -250,7 +304,7 @@ class Budabot extends AOChat {
 		}
 	}
 
-	public function sendGuild($message, $disable_relay = false, $priority = null) {
+	public function sendGuild($message, $disable_relay=false, $priority=null) {
 		if ($this->settingManager->get('guild_channel_status') != 1) {
 			return;
 		}
@@ -273,11 +327,11 @@ class Budabot extends AOChat {
 		$guestColorChannel = $this->settingManager->get('guest_color_channel');
 		$guildColor = $this->settingManager->get("default_guild_color");
 
-		$this->send_guild($guildColor.$message, "\0", $priority);
+		$this->sendToGuild($guildColor.$message, "\0", $priority);
 
 		// relay to private channel
 		if (!$disable_relay && $this->settingManager->get("guest_relay") == 1 && $this->settingManager->get("guest_relay_commands") == 1) {
-			$this->send_privgroup($this->setting->default_private_channel, "</font>{$guestColorChannel}[{$guildNameForRelay}]</font> {$senderLink}: {$guildColor}$message</font>");
+			$this->sendPrivgroup($this->setting->default_private_channel, "</font>{$guestColorChannel}[{$guildNameForRelay}]</font> {$senderLink}: {$guildColor}$message</font>");
 		}
 
 		// relay to bot relay
@@ -286,7 +340,7 @@ class Budabot extends AOChat {
 		}
 	}
 
-	public function sendTell($message, $character, $priority = null, $formatMessage = true) {
+	public function sendTell($message, $character, $priority=null, $formatMessage=true) {
 		// for when $text->makeBlob generates several pages
 		if (is_array($message)) {
 			forEach ($message as $page) {
@@ -305,10 +359,10 @@ class Budabot extends AOChat {
 		}
 
 		$this->logger->logChat("Out. Msg.", $character, $message);
-		$this->send_tell($character, $tellColor.$message, "\0", $priority);
+		$this->sendTell($character, $tellColor.$message, "\0", $priority);
 	}
 
-	public function sendPublic($message, $channel, $priority = null) {
+	public function sendPublic($message, $channel, $priority=null) {
 		// for when $text->makeBlob generates several pages
 		if (is_array($message)) {
 			forEach ($message as $page) {
@@ -324,14 +378,14 @@ class Budabot extends AOChat {
 		$message = $this->text->formatMessage($message);
 		$guildColor = $this->settingManager->get("default_guild_color");
 
-		$this->send_group($channel, $guildColor.$message, "\0", $priority);
+		$this->sendGroup($channel, $guildColor.$message, "\0", $priority);
 	}
 
 	/**
 	 * @name: processCommandType
 	 * @description: returns a command type in the proper format
 	 */
-	function processCommandArgs(&$type, &$admin) {
+	public function processCommandArgs(&$type, &$admin) {
 		if ($type == "") {
 			$type = array("msg", "priv", "guild");
 		} else {
@@ -341,7 +395,7 @@ class Budabot extends AOChat {
 		$admin = explode(' ', $admin);
 		if (count($admin) == 1) {
 			$admin = array_fill(0, count($type), $admin[0]);
-		} else if (count($admin) != count($type)) {
+		} elseif (count($admin) != count($type)) {
 			$this->logger->log('ERROR', "The number of type arguments does not equal the number of admin arguments for command/subcommand registration");
 			return false;
 		}
@@ -349,44 +403,44 @@ class Budabot extends AOChat {
 	}
 
 	/**
-	 * @name: process_packet
+	 * @name: processPacket
 	 * @description: Proccess all incoming messages that bot recives
 	 */
-	function process_packet($packet) {
+	public function processPacket($packet) {
 		try {
-			$this->process_all_packets($packet);
+			$this->processOnePacket($packet);
 
 			// event handlers
-			switch ($packet->type){
+			switch ($packet->type) {
 				case AOCP_LOGIN_OK: // 5
 					$this->buddyListSize += 1000;
 					break;
 				case AOCP_GROUP_ANNOUNCE: // 60
-					$this->process_group_announce($packet->args);
+					$this->processGroupAnnounce($packet->args);
 					break;
 				case AOCP_PRIVGRP_CLIJOIN: // 55, Incoming player joined private chat
-					$this->process_private_channel_join($packet->args);
+					$this->processPrivateChannelJoin($packet->args);
 					break;
 				case AOCP_PRIVGRP_CLIPART: // 56, Incoming player left private chat
-					$this->process_private_channel_leave($packet->args);
+					$this->processPrivateChannelLeave($packet->args);
 					break;
 				case AOCP_BUDDY_ADD: // 40, Incoming buddy logon or off
-					$this->process_buddy_update($packet->args);
+					$this->processBuddyUpdate($packet->args);
 					break;
 				case AOCP_BUDDY_REMOVE: // 41, Incoming buddy removed
-					$this->process_buddy_removed($packet->args);
+					$this->processBuddyRemoved($packet->args);
 					break;
 				case AOCP_MSG_PRIVATE: // 30, Incoming Msg
-					$this->process_private_message($packet->args);
+					$this->processPrivateMessage($packet->args);
 					break;
 				case AOCP_PRIVGRP_MESSAGE: // 57, Incoming priv message
-					$this->process_private_channel_message($packet->args);
+					$this->processPrivateChannelMessage($packet->args);
 					break;
 				case AOCP_GROUP_MESSAGE: // 65, Public and guild channels
-					$this->process_public_channel_message($packet->args);
+					$this->processPublicChannelMessage($packet->args);
 					break;
 				case AOCP_PRIVGRP_INVITE: // 50, private channel invite
-					$this->process_private_channel_invite($packet->args);
+					$this->processPrivateChannelInvite($packet->args);
 					break;
 			}
 		} catch (StopExecutionException $e) {
@@ -394,7 +448,7 @@ class Budabot extends AOChat {
 		}
 	}
 
-	function process_all_packets($packet) {
+	public function processOnePacket($packet) {
 		// fire individual packets event
 		$eventObj = new stdClass;
 		$eventObj->type = "packet({$packet->type})";
@@ -402,7 +456,7 @@ class Budabot extends AOChat {
 		$this->eventManager->fireEvent($eventObj);
 	}
 
-	function process_group_announce($args) {
+	public function processGroupAnnounce($args) {
 		$orgId = $this->getOrgId($args[0]);
 		$this->logger->log('DEBUG', "AOCP_GROUP_ANNOUNCE => name: '$args[1]'");
 		if ($orgId) {
@@ -411,11 +465,11 @@ class Budabot extends AOChat {
 		}
 	}
 
-	function process_private_channel_join($args) {
+	public function processPrivateChannelJoin($args) {
 		$eventObj = new stdClass;
-		$channel = $this->lookup_user($args[0]);
+		$channel = $this->lookupUser($args[0]);
 		$charId = $args[1];
-		$sender = $this->lookup_user($charId);
+		$sender = $this->lookupUser($charId);
 		$eventObj->channel = $channel;
 		$eventObj->sender = $sender;
 
@@ -427,8 +481,8 @@ class Budabot extends AOChat {
 			$this->logger->logChat("Priv Group", -1, "$sender joined the channel.");
 
 			// Remove sender if they are banned
-			if ($this->banController->isBanned($charId)){
-				$this->privategroup_kick($sender);
+			if ($this->banController->isBanned($charId)) {
+				$this->privategroupKick($sender);
 				return;
 			}
 
@@ -439,10 +493,10 @@ class Budabot extends AOChat {
 		}
 	}
 
-	function process_private_channel_leave($args) {
+	public function processPrivateChannelLeave($args) {
 		$eventObj = new stdClass;
-		$channel = $this->lookup_user($args[0]);
-		$sender = $this->lookup_user($args[1]);
+		$channel = $this->lookupUser($args[0]);
+		$sender = $this->lookupUser($args[1]);
 		$eventObj->channel = $channel;
 		$eventObj->sender = $sender;
 
@@ -460,8 +514,8 @@ class Budabot extends AOChat {
 		}
 	}
 
-	function process_buddy_update($args) {
-		$sender	= $this->lookup_user($args[0]);
+	public function processBuddyUpdate($args) {
+		$sender	= $this->lookupUser($args[0]);
 		$status	= 0 + $args[1];
 
 		$eventObj = new stdClass;
@@ -483,7 +537,7 @@ class Budabot extends AOChat {
 			$this->logger->log('DEBUG', "$sender logged off");
 
 			$this->eventManager->fireEvent($eventObj);
-		} else if ($status == 1) {
+		} elseif ($status == 1) {
 			$eventObj->type = "logon";
 
 			$this->logger->log('DEBUG', "$sender logged on");
@@ -492,18 +546,18 @@ class Budabot extends AOChat {
 		}
 	}
 
-	function process_buddy_removed($args) {
-		$sender	= $this->lookup_user($args[0]);
+	public function processBuddyRemoved($args) {
+		$sender	= $this->lookupUser($args[0]);
 
 		$this->logger->log('DEBUG', "AOCP_BUDDY_REMOVE => sender: '$sender'");
 
 		$this->buddylistManager->updateRemoved($args);
 	}
 
-	function process_private_message($args) {
+	public function processPrivateMessage($args) {
 		$type = "msg";
 		$charId = $args[0];
-		$sender	= $this->lookup_user($charId);
+		$sender	= $this->lookupUser($charId);
 
 		$this->logger->log('DEBUG', "AOCP_MSG_PRIVATE => sender: '$sender' message: '$args[1]'");
 
@@ -524,19 +578,19 @@ class Budabot extends AOChat {
 		// AFK/bot check
 		if (preg_match("|$sender is AFK|si", $message)) {
 			return;
-		} else if (preg_match("|I am away from my keyboard right now|si", $message)) {
+		} elseif (preg_match("|I am away from my keyboard right now|si", $message)) {
 			return;
-		} else if (preg_match("|Unknown command or access denied!|si", $message)) {
+		} elseif (preg_match("|Unknown command or access denied!|si", $message)) {
 			return;
-		} else if (preg_match("|I am responding|si", $message)) {
+		} elseif (preg_match("|I am responding|si", $message)) {
 			return;
-		} else if (preg_match("|I only listen|si", $message)) {
+		} elseif (preg_match("|I only listen|si", $message)) {
 			return;
-		} else if (preg_match("|Error!|si", $message)) {
+		} elseif (preg_match("|Error!|si", $message)) {
 			return;
-		} else if (preg_match("|Unknown command input|si", $message)) {
+		} elseif (preg_match("|Unknown command input|si", $message)) {
 			return;
-		} else if (preg_match("|/tell $sender !help|i", $message)) {
+		} elseif (preg_match("|/tell $sender !help|i", $message)) {
 			return;
 		}
 
@@ -560,10 +614,10 @@ class Budabot extends AOChat {
 		$this->commandManager->process($type, $message, $sender, $sendto);
 	}
 
-	function process_private_channel_message($args) {
+	public function processPrivateChannelMessage($args) {
 		$charId = $args[1];
-		$sender	= $this->lookup_user($charId);
-		$channel = $this->lookup_user($args[0]);
+		$sender	= $this->lookupUser($charId);
+		$channel = $this->lookupUser($args[0]);
 		$message = $args[2];
 
 		$eventObj = new stdClass;
@@ -597,11 +651,11 @@ class Budabot extends AOChat {
 		}
 	}
 
-	function process_public_channel_message($args) {
+	public function processPublicChannelMessage($args) {
 		$charId = $args[1];
-		$sender	 = $this->lookup_user($charId);
+		$sender	 = $this->lookupUser($charId);
 		$message = $args[2];
-		$channel = $this->get_gname($args[0]);
+		$channel = $this->getGName($args[0]);
 
 		$eventObj = new stdClass;
 		$eventObj->sender = $sender;
@@ -637,11 +691,11 @@ class Budabot extends AOChat {
 			$eventObj->type = "towers";
 
 			$this->eventManager->fireEvent($eventObj);
-		} else if ($channel == "Org Msg"){
+		} elseif ($channel == "Org Msg") {
 			$eventObj->type = "orgmsg";
 
 			$this->eventManager->fireEvent($eventObj);
-		} else if ($orgId && $this->settingManager->get('guild_channel_status') == 1) {
+		} elseif ($orgId && $this->settingManager->get('guild_channel_status') == 1) {
 			$type = "guild";
 			$sendto = 'guild';
 
@@ -657,10 +711,10 @@ class Budabot extends AOChat {
 		}
 	}
 
-	function process_private_channel_invite($args) {
+	public function processPrivateChannelInvite($args) {
 		$type = "extjoinprivrequest"; // Set message type.
 		$uid = $args[0];
-		$sender = $this->lookup_user($uid);
+		$sender = $this->lookupUser($uid);
 
 		$eventObj = new stdClass;
 		$eventObj->sender = $sender;
@@ -732,18 +786,18 @@ class Budabot extends AOChat {
 				if (call_user_func(array($obj, $method->name)) === false) {
 					$this->logger->log('ERROR', "Failed to call setup handler for '$name'");
 				}
-			} else if ($method->hasAnnotation('HandlesCommand')) {
+			} elseif ($method->hasAnnotation('HandlesCommand')) {
 				$commandName = $method->getAnnotation('HandlesCommand')->value;
 				$methodName  = $method->name;
 				$handlerName = "{$name}.{$method->name}";
 				if (isset($commands[$commandName])) {
 					$commands[$commandName]['handlers'][] = $handlerName;
-				} else if (isset($subcommands[$commandName])) {
+				} elseif (isset($subcommands[$commandName])) {
 					$subcommands[$commandName]['handlers'][] = $handlerName;
 				} else {
 					$this->logger->log('WARN', "Cannot handle command '$commandName' as it is not defined with @DefineCommand in '$name'.");
 				}
-			} else if ($method->hasAnnotation('Event')) {
+			} elseif ($method->hasAnnotation('Event')) {
 				forEach ($method->getAllAnnotations('Event') as $eventAnnotation) {
 					$this->eventManager->register(
 						$moduleName,

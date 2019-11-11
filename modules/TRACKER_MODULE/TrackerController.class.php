@@ -3,16 +3,16 @@
 namespace Budabot\User\Modules;
 
 /**
- * Authors: 
+ * Authors:
  *	- Tyrence (RK2)
  *
  * @Instance
  *
  * Commands this controller contains:
  *	@DefineCommand(
- *		command     = 'track', 
- *		accessLevel = 'all', 
- *		description = 'Show and manage tracked players', 
+ *		command     = 'track',
+ *		accessLevel = 'all',
+ *		description = 'Show and manage tracked players',
  *		help        = 'track.txt'
  *	)
  */
@@ -73,7 +73,7 @@ class TrackerController {
 	 */
 	public function trackLogonEvent($eventObj) {
 		if ($this->chatBot->isReady()) {
-			$uid = $this->chatBot->get_uid($eventObj->sender);
+			$uid = $this->chatBot->getUID($eventObj->sender);
 			$data = $this->db->query("SELECT * FROM tracked_users_<myname> WHERE uid = ?", $uid);
 			if (count($data) > 0) {
 				$this->db->exec("INSERT INTO tracking_<myname> (uid, dt, event) VALUES (?, ?, ?)", $uid, time(), 'logon');
@@ -96,7 +96,7 @@ class TrackerController {
 	 */
 	public function trackLogoffEvent($eventObj) {
 		if ($this->chatBot->isReady()) {
-			$uid = $this->chatBot->get_uid($eventObj->sender);
+			$uid = $this->chatBot->getUID($eventObj->sender);
 			$data = $this->db->query("SELECT * FROM tracked_users_<myname> WHERE uid = ?", $uid);
 			if (count($data) > 0) {
 				$this->db->exec("INSERT INTO tracking_<myname> (uid, dt, event) VALUES (?, ?, ?)", $uid, time(), 'logoff');
@@ -131,7 +131,7 @@ class TrackerController {
 
 				if ($row2->event == 'logon') {
 					$status = "<green>logon<end>";
-				} else if ($row2->event == 'logoff') {
+				} elseif ($row2->event == 'logoff') {
 					$status = "<orange>logoff<end>";
 				} else {
 					$status = "<grey>None<end>";
@@ -157,7 +157,7 @@ class TrackerController {
 	 */
 	public function trackRemoveCommand($message, $channel, $sender, $sendto, $args) {
 		$name = ucfirst(strtolower($args[1]));
-		$uid = $this->chatBot->get_uid($name);
+		$uid = $this->chatBot->getUID($name);
 
 		if (!$uid) {
 			$msg = "Character <highlight>$name<end> does not exist.";
@@ -181,7 +181,7 @@ class TrackerController {
 	 */
 	public function trackAddCommand($message, $channel, $sender, $sendto, $args) {
 		$name = ucfirst(strtolower($args[1]));
-		$uid = $this->chatBot->get_uid($name);
+		$uid = $this->chatBot->getUID($name);
 
 		if (!$uid) {
 			$msg = "Character <highlight>$name<end> does not exist.";
@@ -205,7 +205,7 @@ class TrackerController {
 	 */
 	public function trackShowCommand($message, $channel, $sender, $sendto, $args) {
 		$name = ucfirst(strtolower($args[1]));
-		$uid = $this->chatBot->get_uid($name);
+		$uid = $this->chatBot->getUID($name);
 
 		if (!$uid) {
 			$msg = "Character <highlight>$name<end> does not exist.";
@@ -216,7 +216,7 @@ class TrackerController {
 				forEach ($data as $row) {
 					if ($row->event == 'logon') {
 						$status = "<green>logon<end>";
-					} else if ($row->event == 'logoff') {
+					} elseif ($row->event == 'logoff') {
 						$status = "<orange>logoff<end>";
 					} else {
 						$status = "<grey>unknown<end>";

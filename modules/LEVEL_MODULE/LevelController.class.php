@@ -3,7 +3,7 @@
 namespace Budabot\User\Modules;
 
 /**
- * Authors: 
+ * Authors:
  *	- Tyrence (RK2)
  *	- Derroylo (RK2)
  *	- Legendadv (RK2)
@@ -12,22 +12,22 @@ namespace Budabot\User\Modules;
  *
  * Commands this controller contains:
  *	@DefineCommand(
- *		command     = 'level', 
- *		accessLevel = 'all', 
- *		description = 'Show level ranges', 
+ *		command     = 'level',
+ *		accessLevel = 'all',
+ *		description = 'Show level ranges',
  *		help        = 'level.txt'
  *	)
  *	@DefineCommand(
- *		command     = 'missions', 
- *		accessLevel = 'all', 
- *		description = 'Shows what ql missions a character can roll', 
+ *		command     = 'missions',
+ *		accessLevel = 'all',
+ *		description = 'Shows what ql missions a character can roll',
  *		help        = 'missions.txt',
  *		alias       = 'mission'
  *	)
  *	@DefineCommand(
- *		command     = 'xp', 
- *		accessLevel = 'all', 
- *		description = 'Show xp/sk needed for specified level(s)', 
+ *		command     = 'xp',
+ *		accessLevel = 'all',
+ *		description = 'Show xp/sk needed for specified level(s)',
  *		help        = 'xp.txt',
  *		alias       = 'sk'
  *	)
@@ -64,7 +64,13 @@ class LevelController {
 	public function levelCommand($message, $channel, $sender, $sendto, $args) {
 		$level = $args[1];
 		if (($row = $this->getLevelInfo($level)) != false) {
-			$msg = "<white>L $row->level: Team {$row->teamMin}-{$row->teamMax}<end><highlight> | <end><cyan>PvP {$row->pvpMin}-{$row->pvpMax}<end><highlight> | <end><orange>Missions {$row->missions}<end><highlight> | <end><blue>{$row->tokens} token(s)<end>";
+			$msg = "<white>L $row->level: Team {$row->teamMin}-{$row->teamMax}<end>".
+				"<highlight> | <end>".
+				"<cyan>PvP {$row->pvpMin}-{$row->pvpMax}<end>".
+				"<highlight> | <end>".
+				"<orange>Missions {$row->missions}<end>".
+				"<highlight> | <end>".
+				"<blue>{$row->tokens} token(s)<end>";
 		} else {
 			$msg = "Level must be between <highlight>1<end> and <highlight>220<end>.";
 		}
@@ -134,11 +140,21 @@ class LevelController {
 					}
 				}
 				if ($sk > 0 && $xp > 0) {
-					$msg = "From the beginning of level <highlight>$minLevel<end> you need <highlight>".number_format($xp)."<end> XP and <highlight>".number_format($sk)."<end> SK to reach level <highlight>$maxLevel<end>.";
-				} else if ($sk > 0) {
-					$msg = "From the beginning of level <highlight>$minLevel<end> you need <highlight>".number_format($sk)."<end> SK to reach level <highlight>$maxLevel<end>.";
-				} else if ($xp > 0) {
-					$msg = "From the beginning of level <highlight>$minLevel<end> you need <highlight>".number_format($xp)."<end> XP to reach level <highlight>$maxLevel<end>.";
+					$msg = "From the beginning of level ".
+						"<highlight>$minLevel<end> you need ".
+						"<highlight>".number_format($xp)."<end> XP and ".
+						"<highlight>".number_format($sk)."<end> SK ".
+						"to reach level <highlight>$maxLevel<end>.";
+				} elseif ($sk > 0) {
+					$msg = "From the beginning of level ".
+						"<highlight>$minLevel<end> you need ".
+						"<highlight>".number_format($sk)."<end> SK ".
+						"to reach level <highlight>$maxLevel<end>.";
+				} elseif ($xp > 0) {
+					$msg = "From the beginning of level ".
+						"<highlight>$minLevel<end> you need ".
+						"<highlight>".number_format($xp)."<end> XP ".
+						"to reach level <highlight>$maxLevel<end>.";
 				}
 			} else {
 				$msg = "The start level cannot be higher than the end level.";

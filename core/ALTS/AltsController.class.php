@@ -3,7 +3,7 @@
 namespace Budabot\Core\Modules;
 
 /**
- * Authors: 
+ * Authors:
  *  - Tyrence (RK2)
  *
  * @Instance
@@ -76,7 +76,7 @@ class AltsController {
 		forEach ($names as $name) {
 			$name = ucfirst(strtolower($name));
 	
-			$uid = $this->chatBot->get_uid($name);
+			$uid = $this->chatBot->getUID($name);
 			if (!$uid) {
 				$msg = "Character <highlight>{$name}<end> does not exist.";
 				$sendto->reply($msg);
@@ -134,9 +134,9 @@ class AltsController {
 	
 		if ($altInfo->main == $name) {
 			$msg = "You cannot remove <highlight>{$name}<end> as your main.";
-		} else if (!array_key_exists($name, $altInfo->alts)) {
+		} elseif (!array_key_exists($name, $altInfo->alts)) {
 			$msg = "<highlight>{$name}<end> is not registered as your alt.";
-		} else if (!$altInfo->isValidated($sender) && $altInfo->isValidated($name)) {
+		} elseif (!$altInfo->isValidated($sender) && $altInfo->isValidated($name)) {
 			$msg = "You must be on a validated alt to remove another alt that is validated.";
 		} else {
 			$this->remAlt($altInfo->main, $name);
@@ -218,7 +218,7 @@ class AltsController {
 	public function altsMainCommand($message, $channel, $sender, $sendto, $args) {
 		$new_main = $this->getAltInfo($args[1])->main;
 	
-		$uid = $this->chatBot->get_uid($new_main);
+		$uid = $this->chatBot->getUID($new_main);
 		if (!$uid) {
 			$msg = "Character <highlight>$new_main<end> does not exist.";
 			$sendto->reply($msg);

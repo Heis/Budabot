@@ -3,28 +3,28 @@
 namespace Budabot\User\Modules;
 
 /**
- * Authors: 
+ * Authors:
  *	- Tyrence (RK2)
  *
  * @Instance
  *
  * Commands this controller contains:
  *	@DefineCommand(
- *		command     = 'kos', 
- *		accessLevel = 'guild', 
- *		description = 'Shows the kill-on-sight list', 
+ *		command     = 'kos',
+ *		accessLevel = 'guild',
+ *		description = 'Shows the kill-on-sight list',
  *		help        = 'kos.txt'
  *	)
  *	@DefineCommand(
- *		command     = 'kos add .+', 
- *		accessLevel = 'guild', 
- *		description = 'Adds a character to the kill-on-sight list', 
+ *		command     = 'kos add .+',
+ *		accessLevel = 'guild',
+ *		description = 'Adds a character to the kill-on-sight list',
  *		help        = 'kos.txt'
  *	)
  *	@DefineCommand(
- *		command     = 'kos rem .+', 
- *		accessLevel = 'mod', 
- *		description = 'Removes a character from the kill-on-sight list', 
+ *		command     = 'kos rem .+',
+ *		accessLevel = 'mod',
+ *		description = 'Removes a character from the kill-on-sight list',
  *		help        = 'kos.txt'
  *	)
  */
@@ -89,7 +89,7 @@ class KillOnSightController {
 	 */
 	public function kosAddCommand($message, $channel, $sender, $sendto, $args) {
 		$name = ucfirst(strtolower($args[1]));
-		$charid = $this->chatBot->get_uid($name);
+		$charid = $this->chatBot->getUID($name);
 		
 		if ($charid == false) {
 			$sendto->reply("Character <highlight>$name<end> does not exist.");

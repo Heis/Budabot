@@ -5,16 +5,16 @@ namespace Budabot\User\Modules;
 use Budabot\Core\StopExecutionException;
 
 /**
- * Authors: 
+ * Authors:
  *	- Tyrence (RK2)
  *
  * @Instance
  *
  * Commands this controller contains:
  *	@DefineCommand(
- *		command     = 'broadcast', 
- *		accessLevel = 'mod', 
- *		description = 'View/edit the broadcast bots list', 
+ *		command     = 'broadcast',
+ *		accessLevel = 'mod',
+ *		description = 'View/edit the broadcast bots list',
  *		help        = 'broadcast.txt'
  *	)
  */
@@ -102,7 +102,7 @@ class BroadcastController {
 	public function broadcastAddCommand($message, $channel, $sender, $sendto, $args) {
 		$name = ucfirst(strtolower($args[1]));
 
-		$charid = $this->chatBot->get_uid($name);
+		$charid = $this->chatBot->getUID($name);
 		if ($charid == false) {
 			$sendto->reply("'$name' is not a valid character name.");
 			return;

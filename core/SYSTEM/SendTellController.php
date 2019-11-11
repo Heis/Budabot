@@ -5,16 +5,16 @@ namespace Budabot\User\Modules;
 use Budabot\Core\AutoInject;
 
 /**
- * Authors: 
+ * Authors:
  *	- Tyrence (RK2)
  *
  * @Instance
  *
  * Commands this controller contains:
  *	@DefineCommand(
- *		command     = 'sendtell', 
- *		accessLevel = 'superadmin', 
- *		description = 'Send a tell to another character from the bot', 
+ *		command     = 'sendtell',
+ *		accessLevel = 'superadmin',
+ *		description = 'Send a tell to another character from the bot',
  *		help        = 'sendtell.txt'
  *	)
  */
@@ -30,7 +30,6 @@ class SendTellController extends AutoInject {
 	 * @Setup
 	 */
 	public function setup() {
-		
 	}
 	
 	/**
@@ -42,7 +41,7 @@ class SendTellController extends AutoInject {
 		$message = $args[2];
 		
 		$this->logger->logChat("Out. Msg.", $name, $message);
-		$this->chatBot->send_tell($name, $message, "\0", AOC_PRIORITY_MED);
+		$this->chatBot->sendTell($name, $message, "\0", AOC_PRIORITY_MED);
 		$sendto->reply("Message has been sent to <highlight>$name<end>.");
 	}
 }

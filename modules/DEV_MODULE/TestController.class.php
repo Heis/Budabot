@@ -8,7 +8,7 @@ use Budabot\Core\Registry;
 use stdClass;
 
 /**
- * Authors: 
+ * Authors:
  *  - Tyrence (RK2)
  *
  * @Instance
@@ -173,11 +173,11 @@ class TestController extends AutoInject {
 		$packet = new stdClass;
 		$packet->type = AOCP_GROUP_MESSAGE;
 		$packet->args = array();
-		$packet->args[0] = $this->chatBot->get_gid('org msg');
+		$packet->args[0] = $this->chatBot->getGID('org msg');
 		$packet->args[1] = (int)0xFFFFFFFF;
 		$packet->args[2] = "$sender invited $args[1] to your organization.";
 
-		$this->chatBot->process_packet($packet);
+		$this->chatBot->processPacket($packet);
 	}
 	
 	/**
@@ -201,11 +201,11 @@ class TestController extends AutoInject {
 		$packet = new stdClass;
 		$packet->type = AOCP_GROUP_MESSAGE;
 		$packet->args = array();
-		$packet->args[0] = $this->chatBot->get_gid('tower battle outcome');
+		$packet->args[0] = $this->chatBot->getGID('tower battle outcome');
 		$packet->args[1] = (int)0xFFFFFFFF;
 		$packet->args[2] = "The $args[1] organization $args[2] attacked the $args[3] $args[4] at their base in $args[5]. The attackers won!!";
 
-		$this->chatBot->process_packet($packet);
+		$this->chatBot->processPacket($packet);
 	}
 	
 	/**
@@ -218,11 +218,11 @@ class TestController extends AutoInject {
 		$packet = new stdClass;
 		$packet->type = AOCP_GROUP_MESSAGE;
 		$packet->args = array();
-		$packet->args[0] = $this->chatBot->get_gid('org msg');
+		$packet->args[0] = $this->chatBot->getGID('org msg');
 		$packet->args[1] = (int)0xFFFFFFFF;
 		$packet->args[2] = "Blammo! $launcher has launched an orbital attack!";
 
-		$this->chatBot->process_packet($packet);
+		$this->chatBot->processPacket($packet);
 	}
 
 	/**
@@ -236,7 +236,7 @@ class TestController extends AutoInject {
 		$instance = Registry::getInstance($instanceName);
 		if ($instance == null) {
 			$sendto->reply("Instance <highlight>$instanceName<end> does not exist.");
-		} else if (!method_exists($instance, $methodName)) {
+		} elseif (!method_exists($instance, $methodName)) {
 			$sendto->reply("Method <highlight>$methodName<end> does not exist on instance <highlight>$instanceName<end>.");
 		} else {
 			$this->eventManager->callEventHandler(null, $event);
@@ -252,11 +252,11 @@ class TestController extends AutoInject {
 		$packet = new stdClass;
 		$packet->type = AOCP_GROUP_MESSAGE;
 		$packet->args = array();
-		$packet->args[0] = $this->chatBot->get_gid($this->chatBot->vars['my_guild']);
+		$packet->args[0] = $this->chatBot->getGID($this->chatBot->vars['my_guild']);
 		$packet->args[1] = (int)0xFFFFFFFF;
 		$packet->args[2] = "$sender turned the cloaking device in your city off.";
 
-		$this->chatBot->process_packet($packet);
+		$this->chatBot->processPacket($packet);
 	}
 	
 	/**
@@ -267,11 +267,11 @@ class TestController extends AutoInject {
 		$packet = new stdClass;
 		$packet->type = AOCP_GROUP_MESSAGE;
 		$packet->args = array();
-		$packet->args[0] = $this->chatBot->get_gid($this->chatBot->vars['my_guild']);
+		$packet->args[0] = $this->chatBot->getGID($this->chatBot->vars['my_guild']);
 		$packet->args[1] = (int)0xFFFFFFFF;
 		$packet->args[2] = "$sender turned the cloaking device in your city on.";
 
-		$this->chatBot->process_packet($packet);
+		$this->chatBot->processPacket($packet);
 	}
 	
 	/**

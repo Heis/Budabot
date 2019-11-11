@@ -6,7 +6,7 @@ use stdClass;
 use Exception;
 
 /**
- * Authors: 
+ * Authors:
  *  - Funkman (RK2)
  *  - Tyrence (RK2)
  *
@@ -55,11 +55,22 @@ class CityWaveController {
 		$this->commandAlias->register($this->moduleName, "citywave start", "startwave");
 		$this->commandAlias->register($this->moduleName, "citywave stop", "stopwave");
 		
-		$this->settingManager->add($this->moduleName, 'city_wave_times', 'Times to display timer alerts', 'edit', 'text', '105s 150s 90s 120s 120s 120s 120s 120s 120s', '105s 150s 90s 120s 120s 120s 120s 120s 120s', '', 'mod', 'city_wave_times.txt');
+		$this->settingManager->add(
+			$this->moduleName,
+			'city_wave_times',
+			'Times to display timer alerts',
+			'edit',
+			'text',
+			'105s 150s 90s 120s 120s 120s 120s 120s 120s',
+			'105s 150s 90s 120s 120s 120s 120s 120s 120s',
+			'',
+			'mod',
+			'city_wave_times.txt'
+		);
 		$this->settingManager->registerChangeListener('city_wave_times', array($this, 'changeWaveTimes'));
 	}
 	
-	public function changeWaveTimes($settingName, $oldValue, $newValue, $data)  {
+	public function changeWaveTimes($settingName, $oldValue, $newValue, $data) {
 		$alertTimes = explode(' ', $newValue);
 		if (count($alertTimes) != 9) {
 			throw new Exception("Error saving setting: must have 9 spawn times. For more info type !help city_wave_times.");
@@ -109,7 +120,7 @@ class CityWaveController {
 		$wave = $this->getWave();
 		if ($wave === null) {
 			$msg = "There is no raid in progress at this time.";
-		} else if ($wave == 9) {
+		} elseif ($wave == 9) {
 			$msg = "Waiting for General.";
 		} else {
 			$msg = "Waiting for wave $wave.";
@@ -136,7 +147,7 @@ class CityWaveController {
 		}
 	}
 	
-	public function startWaveCounter($name = null) {
+	public function startWaveCounter($name=null) {
 		if ($name === null) {
 			$this->chatBot->sendGuild("Wave counter started.");
 		} else {

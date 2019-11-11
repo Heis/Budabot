@@ -6,16 +6,16 @@ use Budabot\Core\StopExecutionException;
 use Exception;
 
 /**
- * Authors: 
+ * Authors:
  *	- Tyrence (RK2)
  *
  * @Instance
  *
  * Commands this controller contains:
  *	@DefineCommand(
- *		command     = 'shop', 
- *		accessLevel = 'all', 
- *		description = 'Search for things that have been posted to the shopping channels', 
+ *		command     = 'shop',
+ *		accessLevel = 'all',
+ *		description = 'Search for things that have been posted to the shopping channels',
  *		help        = 'shop.txt'
  *	)
  */
@@ -62,8 +62,24 @@ class ShoppingController {
 		$this->db->loadSQLFile($this->moduleName, "shopping_messages");
 		$this->db->loadSQLFile($this->moduleName, "shopping_items");
 		
-		$this->settingManager->add($this->moduleName, "shop_message_age", "How long to keep shopping messages", "edit", "time", "10d", "1d;2d;5d;10d;15d;20d");
-		$this->settingManager->add($this->moduleName, "shop_database", "Where to look for shopping messages", "edit", "text", "http://shopping.budabot.jkbff.com/shopping/index.php", "local;http://shopping.budabot.jkbff.com/shopping/index.php");
+		$this->settingManager->add(
+			$this->moduleName,
+			"shop_message_age",
+			"How long to keep shopping messages",
+			"edit",
+			"time",
+			"10d",
+			"1d;2d;5d;10d;15d;20d"
+		);
+		$this->settingManager->add(
+			$this->moduleName,
+			"shop_database",
+			"Where to look for shopping messages",
+			"edit",
+			"text",
+			"http://shopping.budabot.jkbff.com/shopping/index.php",
+			"local;http://shopping.budabot.jkbff.com/shopping/index.php"
+		);
 	}
 
 	/**
@@ -77,7 +93,7 @@ class ShoppingController {
 			$minQl = $args[1];
 			$maxQl = $args[2];
 			$search = $args[3];
-		} else if (count($args) == 3) {
+		} elseif (count($args) == 3) {
 			$minQl = $args[1];
 			$maxQl = $args[1];
 			$search = $args[2];
@@ -122,7 +138,7 @@ class ShoppingController {
 		$response = $this->http->get($url)->withQueryParams($params)->waitAndReturnResponse();
 		if (!empty($response->error)) {
 			throw new Exception($response->error);
-		} else if (substr($response->body, 0, 5) == 'Error') {
+		} elseif (substr($response->body, 0, 5) == 'Error') {
 			throw new Exception($response->body);
 		} else {
 			return json_decode($response->body);
@@ -175,8 +191,8 @@ class ShoppingController {
 		}
 
 		$charId = $packet->args[1];
-		$channel = $this->chatBot->get_gname($packet->args[0]);
-		$sender	= $this->chatBot->lookup_user($charId);
+		$channel = $this->chatBot->getGName($packet->args[0]);
+		$sender	= $this->chatBot->lookupUser($charId);
 		$message = $packet->args[2];
 		
 		if ($this->banController->isBanned($charId)) {
@@ -210,9 +226,9 @@ class ShoppingController {
 		$messageType = 1;
 		if (preg_match("/^(.{0,3})wtb/i", $message)) {
 			$messageType = 2;
-		} else if (preg_match("/^(.{0,3})wtt/i", $message)) {
+		} elseif (preg_match("/^(.{0,3})wtt/i", $message)) {
 			$messageType = 3;
-		} else if (preg_match("/^(.{0,3})wth/i", $message)) {
+		} elseif (preg_match("/^(.{0,3})wth/i", $message)) {
 			$messageType = 4;
 		}
 		

@@ -2,7 +2,6 @@
 
 namespace Budabot\Core;
 
-use Budabot\Core\xml;
 use stdClass;
 use Budabot\Core\AOChatPacket;
 
@@ -25,7 +24,7 @@ class GuildManager {
 	/** @Inject */
 	public $playerManager;
 
-	public function getById($guild_id, $rk_num = 0, $forceUpdate = false) {
+	public function getById($guild_id, $rk_num=0, $forceUpdate=false) {
 		// if no server number is specified use the one on which the bot is logged in
 		if ($rk_num == 0) {
 			$rk_num = $this->chatBot->vars["dimension"];
@@ -65,13 +64,13 @@ class GuildManager {
 		forEach ($members as $member) {
 			$name = $member->NAME;
 			if (!isset($this->chatBot->id[$name])) {
-				$this->chatBot->send_packet(new AOChatPacket("out", AOCP_CLIENT_LOOKUP, $name));
+				$this->chatBot->sendPacket(new AOChatPacket("out", AOCP_CLIENT_LOOKUP, $name));
 			}
 		}
 
 		forEach ($members as $member) {
 			$name = $member->NAME;
-			$charid = $this->chatBot->get_uid($name);
+			$charid = $this->chatBot->getUID($name);
 			if ($charid == null) {
 				$charid = 0;
 			}

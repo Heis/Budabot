@@ -5,7 +5,7 @@ namespace Budabot\User\Modules;
 use stdClass;
 
 /**
- * Authors: 
+ * Authors:
  *  - Lucier (RK1),
  *  - Tyrence (RK2)
  *
@@ -14,8 +14,8 @@ use stdClass;
  * Commands this controller contains:
  *	@DefineCommand(
  *		command     = 'vote',
- *		accessLevel = 'all', 
- *		description = 'View/participate in votes and polls', 
+ *		accessLevel = 'all',
+ *		description = 'View/participate in votes and polls',
  *		help        = 'vote.txt'
  *	)
  */
@@ -64,7 +64,18 @@ class VoteController {
 	public function setup() {
 		$this->db->loadSQLFile($this->moduleName, 'vote');
 		
-		$this->settingManager->add($this->moduleName, "vote_channel_spam", "Showing Vote status messages in", "edit", "options", "2", "Private Channel;Guild;Private Channel and Guild;Neither", "0;1;2;3", "mod", "votesettings.txt");
+		$this->settingManager->add(
+			$this->moduleName,
+			"vote_channel_spam",
+			"Showing Vote status messages in",
+			"edit",
+			"options",
+			"2",
+			"Private Channel;Guild;Private Channel and Guild;Neither",
+			"0;1;2;3",
+			"mod",
+			"votesettings.txt"
+		);
 		
 		$data = $this->db->query("SELECT * FROM vote_<myname> WHERE `status` <> ? AND `duration` IS NOT NULL", self::STATUS_ENDED);
 		forEach ($data as $row) {
@@ -97,26 +108,26 @@ class VoteController {
 				$title = "Finished Vote: $question";
 				$this->db->exec("UPDATE $this->table SET `status` = ? WHERE `duration` = ? AND `question` = ?", self::STATUS_ENDED, $duration, $question);
 				unset($this->votes[$key]);
-			} else if ($status == self::STATUS_CREATED) {
+			} elseif ($status == self::STATUS_CREATED) {
 				$title = "Vote: $question";
 
 				if ($timeleft > 3600) {
 					$mstatus = self::STATUS_STARTED;
-				} else if ($timeleft > 900) {
+				} elseif ($timeleft > 900) {
 					$mstatus = self::STATUS_60_MINUTES_LEFT;
-				} else if ($timeleft > 60) {
+				} elseif ($timeleft > 60) {
 					$mstatus = self::STATUS_15_MINUTES_LEFT;
 				} else {
 					$mstatus = self::STATUS_60_SECONDS_LEFT;
 				}
 				$this->votes[$key]->status = $mstatus;
-			} else if ($timeleft <= 60 && $timeleft > 0 && $status != self::STATUS_60_SECONDS_LEFT) {
+			} elseif ($timeleft <= 60 && $timeleft > 0 && $status != self::STATUS_60_SECONDS_LEFT) {
 				$title = "60 seconds left: $question";
 				$this->votes[$key]->status = self::STATUS_60_SECONDS_LEFT;
-			} else if ($timeleft <= 900 && $timeleft > 60 && $status != self::STATUS_15_MINUTES_LEFT) {
+			} elseif ($timeleft <= 900 && $timeleft > 60 && $status != self::STATUS_15_MINUTES_LEFT) {
 				$title = "15 minutes left: $question";
 				$this->votes[$key]->status = self::STATUS_15_MINUTES_LEFT;
-			} else if ($timeleft <= 3600 && $timeleft > 900 && $status != self::STATUS_60_MINUTES_LEFT) {
+			} elseif ($timeleft <= 3600 && $timeleft > 900 && $status != self::STATUS_60_MINUTES_LEFT) {
 				$title = "60 minutes left: $question";
 				$this->votes[$key]->status = self::STATUS_60_MINUTES_LEFT;
 			} else {
@@ -124,7 +135,6 @@ class VoteController {
 			}
 
 			if ($title != "") { // Send current results to guest + org chat.
-
 				$blob = $this->getVoteBlob($question);
 
 				$msg = $this->text->makeBlob($title, $blob);
@@ -247,7 +257,7 @@ class VoteController {
 				$this->db->exec("UPDATE $this->table SET `duration` = ? WHERE `question` = ?", $duration, $question);
 				$this->votes[$question]->duration = $duration;
 				$msg = "Vote duration reduced to 60 seconds.";
-			} else if ($timeleft <= 0) {
+			} elseif ($timeleft <= 0) {
 				$msg = "This vote has already finished.";
 			} else {
 				$msg = "There is only <highlight>$timeleft<end> seconds left.";
@@ -268,7 +278,7 @@ class VoteController {
 		$row = $this->db->queryRow("SELECT * FROM $this->table WHERE `author` = ? AND `question` = ? AND `duration` IS NULL", $sender, $question);
 		if ($row->answer && $timeleft > 0) {
 			$privmsg = "You voted: <highlight>(".$row->answer.")<end>.";
-		} else if ($timeleft > 0) {
+		} elseif ($timeleft > 0) {
 			$privmsg = "You have not voted on this.";
 		}
 
@@ -298,7 +308,7 @@ class VoteController {
 
 		if (!$duration) {
 			$msg = "Could not find any votes with this topic.";
-		} else if ($timeleft <= 0) {
+		} elseif ($timeleft <= 0) {
 			$msg = "No longer accepting votes for this topic.";
 		} else {
 			$data = $this->db->query("SELECT * FROM $this->table WHERE `question` = ? AND `duration` IS NULL AND `author` = ?", $question, $sender);
@@ -330,13 +340,23 @@ class VoteController {
 			$answer = explode($this->delimiter, $answers);
 			if (count($answer) < 2) {
 				$msg = "You must have at least two options for this vote topic.";
-			} else if (!$question) {
+			} elseif (!$question) {
 				$msg = "You must specify a question for your new vote topic.";
 			} else {
 				$status = self::STATUS_CREATED;
 				$data = $this->db->query("SELECT * FROM $this->table WHERE `question` = ?", $question);
 				if (count($data) == 0) {
-					$this->db->exec("INSERT INTO $this->table (`question`, `author`, `started`, `duration`, `answer`, `status`) VALUES (?, ?, ?, ?, ?, ?)", $question, $sender, time(), $newtime, $answers, $status);
+					$this->db->exec(
+						"INSERT INTO $this->table ".
+						"(`question`, `author`, `started`, `duration`, `answer`, `status`) ".
+						"VALUES (?, ?, ?, ?, ?, ?)",
+						$question,
+						$sender,
+						time(),
+						$newtime,
+						$answers,
+						$status
+					);
 					$obj = new stdClass;
 					$obj->question = $question;
 					$obj->author = $sender;
@@ -405,7 +425,7 @@ class VoteController {
 			}
 			if ($val < 10) {
 				$blob .= "<black>__<end>$val% ";
-			} else if ($val < 100) {
+			} elseif ($val < 100) {
 				$blob .= "<black>_<end>$val% ";
 			} else {
 				$blob .= "$val% ";

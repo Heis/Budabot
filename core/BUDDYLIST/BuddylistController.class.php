@@ -3,7 +3,7 @@
 namespace Budabot\Core\Modules;
 
 /**
- * Authors: 
+ * Authors:
  *	- Tyrence (RK2)
  *
  * @Instance
@@ -11,8 +11,8 @@ namespace Budabot\Core\Modules;
  * Commands this controller contains:
 *	@DefineCommand(
  *		command     = 'buddylist',
- *		accessLevel = 'admin', 
- *		description = 'Shows and manages buddies on the buddylist', 
+ *		accessLevel = 'admin',
+ *		description = 'Shows and manages buddies on the buddylist',
  *		help        = 'buddylist.txt',
  *		alias		= 'friendlist'
  *	)
@@ -111,7 +111,7 @@ class BuddylistController {
 	 */
 	public function buddylistRemAllCommand($message, $channel, $sender, $sendto, $args) {
 		forEach ($this->buddylistManager->buddyList as $uid => $buddy) {
-			$this->chatBot->buddy_remove($uid);
+			$this->chatBot->buddyRemove($uid);
 		}
 
 		$msg = "All characters have been removed from the buddy list.";

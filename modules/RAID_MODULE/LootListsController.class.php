@@ -3,7 +3,7 @@
 namespace Budabot\User\Modules;
 
 /**
- * Authors: 
+ * Authors:
  *	- Marinerecon (RK2)
  *  - Derroylo (RK2)
  *  - Tyrence (RK2)
@@ -397,7 +397,7 @@ class LootListsController {
 		$itemlink["VNGW"] = $this->text->makeItem(257123, 257123, 300, "Vektor ND Grand Wyrm");
 		$list = '';
 
-		switch($sector) {
+		switch ($sector) {
 			case "7":
 				$raid = "APF";
 				$category = "Sector 7";
@@ -418,7 +418,10 @@ class LootListsController {
 				$list .= "Name: {$itemlink["KVPU"]}\n";
 				$list .= $this->text->makeImage(218768) . "\n";
 				$list .= "Name: {$itemlink["KRI"]}\n";
-				$list .= "Purpose: <highlight>Kyr'Ozch Rank Identification, Kyr'Ozch Video Processing Unit and Kyr'Ozch Battlesuit Audio Processor can be traded at your faction vendor at the Alien Playfield Bar for Tokens or Credits.<end>\n";
+				$list .= "Purpose: <highlight>".
+					"Kyr'Ozch Rank Identification, Kyr'Ozch Video Processing Unit and Kyr'Ozch Battlesuit Audio Processor ".
+					"can be traded at your faction vendor at the Alien Playfield Bar for Tokens or Credits.".
+					"<end>\n";
 				$list .= "Note: <highlight>Drops on all Alien Playfield from the Boss (one from each type).<end>\n\n";
 
 				//Token Board
@@ -463,7 +466,10 @@ class LootListsController {
 				$list .= "Name: {$itemlink["KVPU"]}\n";
 				$list .= $this->text->makeImage(218768) . "\n";
 				$list .= "Name: {$itemlink["KRI"]}\n";
-				$list .= "Purpose: <highlight>Kyr'Ozch Rank Identification, Kyr'Ozch Video Processing Unit and Kyr'Ozch Battlesuit Audio Processor can be traded at your faction vendor at the Alien Playfield Bar for Tokens or Credits.<end>\n";
+				$list .= "Purpose: <highlight>".
+					"Kyr'Ozch Rank Identification, Kyr'Ozch Video Processing Unit and Kyr'Ozch Battlesuit Audio Processor ".
+					"can be traded at your faction vendor at the Alien Playfield Bar for Tokens or Credits.".
+					"<end>\n";
 				$list .= "Note: <highlight>Drops on all Alien Playfields from the Boss (one from each type).<end>\n\n";
 
 				//Token Board
@@ -501,7 +507,10 @@ class LootListsController {
 				$list .= "Name: {$itemlink["KVPU"]}\n";
 				$list .= $this->text->makeImage(218768) . "\n";
 				$list .= "Name: {$itemlink["KRI"]}\n";
-				$list .= "Purpose: <highlight>Kyr'Ozch Rank Identification, Kyr'Ozch Video Processing Unit and Kyr'Ozch Battlesuit Audio Processor can be traded at your faction vendor at the Alien Playfield Bar for Tokens or Credits.<end>\n";
+				$list .= "Purpose: <highlight>".
+					"Kyr'Ozch Rank Identification, Kyr'Ozch Video Processing Unit and Kyr'Ozch Battlesuit Audio Processor ".
+					"can be traded at your faction vendor at the Alien Playfield Bar for Tokens or Credits.".
+					"<end>\n";
 				$list .= "Note: <highlight>Drops on all Alien Playfield from the Boss (one from each type).<end>\n\n";
 
 				//Token Board

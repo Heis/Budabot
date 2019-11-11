@@ -5,7 +5,7 @@ namespace Budabot\User\Modules;
 use Exception;
 
 /**
- * Authors: 
+ * Authors:
  *  - Tyrence (RK2)
  *
  * @Instance
@@ -46,7 +46,6 @@ class ClusterController {
 
 		forEach ($data as $cluster) {
 			$blob .= $this->text->makeChatcmd($cluster->LongName, "/tell <myname> cluster $cluster->LongName") . "\n";
-
 		}
 		$msg = $this->text->makeBlob("Cluster List ($count)", $blob);
 		$sendto->reply($msg);
@@ -71,7 +70,12 @@ class ClusterController {
 			$implantDesignerLink = $this->text->makeChatcmd("implant designer", "/tell <myname> implantdesigner");
 			$blob = "Click 'Add' to add cluster to $implantDesignerLink.\n\n";
 			forEach ($data as $cluster) {
-				$sql = "SELECT i.ShortName as Slot, c2.Name AS ClusterType FROM ClusterImplantMap c1 JOIN ClusterType c2 ON c1.ClusterTypeID = c2.ClusterTypeID JOIN ImplantType i ON c1.ImplantTypeID = i.ImplantTypeID WHERE c1.ClusterID = ? ORDER BY c2.ClusterTypeID DESC";
+				$sql = "SELECT i.ShortName as Slot, c2.Name AS ClusterType ".
+					"FROM ClusterImplantMap c1 ".
+					"JOIN ClusterType c2 ON c1.ClusterTypeID = c2.ClusterTypeID ".
+					"JOIN ImplantType i ON c1.ImplantTypeID = i.ImplantTypeID ".
+					"WHERE c1.ClusterID = ? ".
+					"ORDER BY c2.ClusterTypeID DESC";
 				$results = $this->db->query($sql, $cluster->ClusterID);
 				
 				$blob .= "<pagebreak><highlight>$cluster->LongName<end>:\n<tab>";

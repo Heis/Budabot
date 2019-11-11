@@ -226,7 +226,7 @@ class BanController {
 	public function unbanCommand($message, $channel, $sender, $sendto, $args) {
 		$who = ucfirst(strtolower($args[1]));
 
-		$charId = $this->chatBot->get_uid($who);
+		$charId = $this->chatBot->getUID($who);
 		if (!$this->isBanned($charId)) {
 			$sendto->reply("<highlight>$who<end> is not banned on this bot.");
 			return;
@@ -257,7 +257,7 @@ class BanController {
 	 * This helper method bans player with given arguments.
 	 */
 	private function banPlayer($who, $sender, $length, $reason, $sendto) {
-		$charId = $this->chatBot->get_uid($who);
+		$charId = $this->chatBot->getUID($who);
 		if ($charId == null) {
 			$sendto->reply("Character <highlight>$who<end> does not exist.");
 			return;

@@ -3,16 +3,16 @@
 namespace Budabot\User\Modules;
 
 /**
- * Authors: 
+ * Authors:
  *	- Tyrence (RK2)
  *
  * @Instance
  *
  * Commands this controller contains:
  *	@DefineCommand(
- *		command     = 'reputation', 
- *		accessLevel = 'guild', 
- *		description = 'Allows people to see and add reputation of other players', 
+ *		command     = 'reputation',
+ *		accessLevel = 'guild',
+ *		description = 'Allows people to see and add reputation of other players',
  *		help        = 'reputation.txt'
  *	)
  */
@@ -87,7 +87,7 @@ class ReputationController {
 	 */
 	public function reputationAddCommand($message, $channel, $sender, $sendto, $args) {
 		$name = ucfirst(strtolower($args[1]));
-		$charid = $this->chatBot->get_uid($name);
+		$charid = $this->chatBot->getUID($name);
 		$rep = $args[2];
 		$comment = $args[3];
 

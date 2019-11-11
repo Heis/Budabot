@@ -14,7 +14,7 @@ namespace Budabot\User\Modules;
  *      alias       = 'callers'
  *	)
  *	@DefineCommand(
- *		command     = 'assist .+', 
+ *		command     = 'assist .+',
  *		accessLevel = 'rl',
  *		description = 'Sets a new assist',
  *		help        = 'assist.txt'
@@ -84,11 +84,11 @@ class ChatAssistController {
 		
 		if (count($nameArray) == 1) {
 			$name = ucfirst(strtolower($args[1]));
-			$uid = $this->chatBot->get_uid($name);
+			$uid = $this->chatBot->getUID($name);
 			if (!$uid) {
 				$msg = "Character <highlight>$name<end> does not exist.";
 				$sendto->reply($msg);
-			} else if ($channel == "priv" && !isset($this->chatBot->chatlist[$name])) {
+			} elseif ($channel == "priv" && !isset($this->chatBot->chatlist[$name])) {
 				$msg = "Character <highlight>$name<end> is not in this bot.";
 				$sendto->reply($msg);
 			}
@@ -98,11 +98,11 @@ class ChatAssistController {
 		} else {
 			forEach ($nameArray as $key => $name) {
 				$name = ucfirst(strtolower($name));
-				$uid = $this->chatBot->get_uid($name);
+				$uid = $this->chatBot->getUID($name);
 				if (!$uid) {
 					$msg = "Character <highlight>$name<end> does not exist.";
 					$sendto->reply($msg);
-				} else if ($channel == "priv" && !isset($this->chatBot->chatlist[$name])) {
+				} elseif ($channel == "priv" && !isset($this->chatBot->chatlist[$name])) {
 					$msg = "Character <highlight>$name<end> is not in this bot.";
 					$sendto->reply($msg);
 				}

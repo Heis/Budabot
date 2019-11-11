@@ -5,7 +5,7 @@ namespace Budabot\Core\Modules;
 use Budabot\Core\PrivateMessageCommandReply;
 
 /**
- * Authors: 
+ * Authors:
  *  - Sebuda (RK2)
  *  - Tyrence (RK2)
  *
@@ -326,7 +326,7 @@ class SystemController {
 	public function checkaccessCommand($message, $channel, $sender, $sendto, $args) {
 		if (isset($args[1])) {
 			$name = ucfirst(strtolower($args[1]));
-			if (!$this->chatBot->get_uid($name)) {
+			if (!$this->chatBot->getUID($name)) {
 				$sendto->reply("Character <highlight>{$name}<end> does not exist.");
 				return;
 			}
@@ -398,7 +398,7 @@ class SystemController {
 
 		// send a message to guild channel
 		$this->chatBot->sendGuild($msg, true);
-		$this->chatBot->sendPrivate($msg, true);
+		/* $this->chatBot->sendPrivate($msg, true); */
 	}
 	
 	/**
